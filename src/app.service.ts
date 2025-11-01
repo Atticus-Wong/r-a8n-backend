@@ -1,20 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RouteOptimizationClient, protos } from '@googlemaps/routeoptimization';
+import { RouteOptimizationClient } from '@googlemaps/routeoptimization';
 import { RidesQueryDTO } from './utils/types';
+import { OptimizeToursResponse, OptimizeToursRequest } from './utils/types';
+import { isoToTimestamp } from './utils/helper';
 
-type OptimizeToursRequest = protos.google.maps.routeoptimization.v1.IOptimizeToursRequest;
-type OptimizeToursResponse = protos.google.maps.routeoptimization.v1.IOptimizeToursResponse;
-type Timestamp = protos.google.protobuf.ITimestamp;
-
-const isoToTimestamp = (iso: string): Timestamp => {
-	const date = new Date(iso);
-	const millis = date.getTime();
-	return {
-		seconds: Math.floor(millis / 1000),
-		nanos: (millis % 1000) * 1_000_000,
-	};
-};
 
 
 @Injectable()
