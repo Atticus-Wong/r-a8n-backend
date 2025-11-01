@@ -19,4 +19,19 @@ export type RidesQueryDTO = {
 	}
 }
 
+export type CreateGroupDTO = {
+	name: string;
+	latitude: number;
+	longitude: number;
+}
 
+
+export type CreateMemberDTO = {
+	groupId: string;
+	name: string;
+	availableSeats?: number | null;
+	isDriver?: boolean;
+	latitude: string;
+	longitude: string;
+	contactInfo: any
+};
