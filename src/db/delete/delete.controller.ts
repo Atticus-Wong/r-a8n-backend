@@ -21,4 +21,12 @@ export class DeleteController{
 	) {
 		return this.deletes.deleteMember(body);
 	}
+
+	@Post('session')
+	deleteSession(
+		@Body()
+		body: { placeholder: string },
+	) {
+		return this.deletes.deleteSession(body);
+	}
 }

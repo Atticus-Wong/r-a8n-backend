@@ -14,4 +14,8 @@ export class DeleteService {
 	async deleteMember(data: CreateMemberDTO) {
 		// TODO: Implement
 	}
+
+	async deleteSession(data: any) {
+		// TODO: implement
+	}
 }

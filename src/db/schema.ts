@@ -37,6 +37,7 @@ export const sessions = pgTable('sessions', {
 export const groups = pgTable('groups', {
 	group_id: uuid('group_id').defaultRandom().primaryKey().notNull(),
 	name: text('name').notNull(),
+	abbreviation: text('abbreviation'),
 	latitude: doublePrecision('latitude').notNull(),
 	longitude: doublePrecision('longitude').notNull(),
 })

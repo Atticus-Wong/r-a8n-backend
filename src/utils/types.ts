@@ -7,15 +7,19 @@ export type Timestamp = protos.google.protobuf.ITimestamp;
 
 // DTO = Data Transfer Object
 export type RidesQueryDTO = {
-	drivers: string[]
+	drivers: {
+		lat: string
+		lng: string
+		name: string
+	}[]
 	riders: {
 		lat: string
-		long: string
+		lng: string
 		name: string
 	}[]
 	destination: {
 		lat: string
-		long: string
+		lng: string
 	}
 }
 
