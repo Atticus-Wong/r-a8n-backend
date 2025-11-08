@@ -1,20 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RouteOptimizationClient, protos } from '@googlemaps/routeoptimization';
+import { RouteOptimizationClient } from '@googlemaps/routeoptimization';
 import { RidesQueryDTO } from './utils/types';
+import { OptimizeToursResponse, OptimizeToursRequest } from './utils/types';
+import { isoToTimestamp } from './utils/helper';
 
-type OptimizeToursRequest = protos.google.maps.routeoptimization.v1.IOptimizeToursRequest;
-type OptimizeToursResponse = protos.google.maps.routeoptimization.v1.IOptimizeToursResponse;
-type Timestamp = protos.google.protobuf.ITimestamp;
-
-const isoToTimestamp = (iso: string): Timestamp => {
-	const date = new Date(iso);
-	const millis = date.getTime();
-	return {
-		seconds: Math.floor(millis / 1000),
-		nanos: (millis % 1000) * 1_000_000,
-	};
-};
 
 
 @Injectable()
@@ -28,6 +18,8 @@ export class AppService {
 		return projectID
   }
 
+	// NOTE: response object has a visits array that stores all necessary information
+	// NOTE: you can set vehicle capacity
 	async optimizeRides(body: RidesQueryDTO): Promise<OptimizeToursResponse> {
 		const projectID = this.config.getOrThrow<string>('GCP_PROJECT_ID')
 		const request: OptimizeToursRequest = {
@@ -35,19 +27,43 @@ export class AppService {
 			model: {
 				shipments: [
 					{
-						pickups: [
+						pickups: [ // colleges at la rue
 							{
 								arrivalLocation: {
-									latitude: 37.73881799999999,
-									longitude: -122.4161,
+									latitude: 38.54121451246123, // 38.54121451246123, -121.76212189869403
+									longitude: -121.76212189869403,
 								},
+								loadDemands: {
+									seats: { amount: 1 }
+								}
 							},
 						],
 						deliveries: [
 							{
 								arrivalLocation: {
-									latitude: 37.79581,
-									longitude: -122.4218856,
+									latitude: 38.565671102839445,
+									longitude: -121.44199352101788,
+								},
+							},
+						],
+					},
+					{
+						pickups: [ // avalon
+							{
+								arrivalLocation: {
+									latitude: 38.53861308341104, // 38.53861308341104, -121.72459217127707
+									longitude: -121.72459217127707,
+								},
+								loadDemands: {
+									seats: { amount: 1 }
+								}
+							},
+						],
+						deliveries: [
+							{
+								arrivalLocation: {
+									latitude: 38.565671102839445,
+									longitude: -121.44199352101788,
 								},
 							},
 						],
@@ -56,14 +72,19 @@ export class AppService {
 				vehicles: [
 					{
 						startLocation: {
-							latitude: 37.73881799999999,
-							longitude: -122.4161,
+							latitude: 38.53772601870374, // 38.53772601870374, -121.72785218662175
+							longitude: -121.72785218662175,
 						},
 						endLocation: {
-							latitude: 37.73881799999999,
-							longitude: -122.4161,
+							latitude: 38.565671102839445,
+							longitude: -121.44199352101788,
 						},
 						costPerKilometer: 1,
+						loadLimits: {
+							seats: {
+								maxLoad: 2
+							}
+						}
 					},
 				],
 				globalStartTime: isoToTimestamp('2024-02-13T00:00:00.000Z'),
@@ -80,6 +101,7 @@ export class AppService {
 					Record<string, unknown> | undefined,
 			];
 			const result = response[0];
+			this.logger.log("Status 200: /rides endpoint")
 			return result;
 		} catch (error) {
 			this.logger.error('optimizeTours failed', error as Error);
